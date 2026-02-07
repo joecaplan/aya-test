@@ -15,6 +15,7 @@
         height: 100%;
         background: transparent;
         overflow: hidden;
+        cursor: pointer;
       }
 
       canvas {
@@ -29,14 +30,36 @@
     <canvas id="rive-canvas"></canvas>
 
     <script>
-      const riveAnimation = new rive.Rive({
+      const canvas = document.getElementById("rive-canvas");
+
+      const riveInstance = new rive.Rive({
         src: "aya_test3.riv",
-        canvas: document.getElementById("rive-canvas"),
+        canvas: canvas,
+        stateMachines: "State Machine 1",
         autoplay: true,
-        // Optional:
-        // stateMachines: "State Machine 1",
-        // fit: rive.Fit.Contain,
-        // alignment: rive.Alignment.Center
+        fit: rive.Fit.Contain,
+        alignment: rive.Alignment.Center,
+        onLoad: () => {
+          const inputs = riveInstance.stateMachineInputs("State Machine 1");
+
+          const hoverInput = inputs.find(i => i.name === "bool");
+          const clickTrigger = inputs.find(i => i.name === "trig");
+
+          // Hover ON
+          canvas.addEventListener("mouseenter", () => {
+            if (hoverInput) hoverInput.value = true;
+          });
+
+          // Hover OFF
+          canvas.addEventListener("mouseleave", () => {
+            if (hoverInput) hoverInput.value = false;
+          });
+
+          // Click trigger
+          canvas.addEventListener("click", () => {
+            if (clickTrigger) clickTrigger.fire();
+          });
+        }
       });
     </script>
   </body>

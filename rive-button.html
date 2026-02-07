@@ -1,18 +1,53 @@
-fetch(riveFile)
-  .then(response => response.arrayBuffer())
-  .then(buffer => {
-    const r = new rive.Rive({
-      buffer: buffer,
-      canvas: canvas,
-      autoplay: true,
-      // Remove stateMachines - just play the first animation
-      fit: rive.Fit.Contain,
-      alignment: rive.Alignment.Center,
-      onLoad: () => {
-        console.log('Rive loaded successfully!');
-        console.log('Available animations:', r.animationNames);
-        console.log('Available state machines:', r.stateMachineNames);
-      }
-    });
-  })
-  .catch(err => console.error('Error loading Rive:', err));
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f0f0f0;
+    }
+    #canvas {
+      width: 500px;
+      height: 500px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script src="https://unpkg.com/@rive-app/canvas@2.7.0"></script>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const riveFile = 'https://raw.githubusercontent.com/joecaplan/aya-test/main/aya_test2.riv';
+    
+    fetch(riveFile)
+      .then(response => response.arrayBuffer())
+      .then(buffer => {
+        const r = new rive.Rive({
+          buffer: buffer,
+          canvas: canvas,
+          autoplay: true,
+          stateMachines: 'State Machine 1',
+          fit: rive.Fit.Contain,
+          alignment: rive.Alignment.Center,
+          onLoad: () => {
+            console.log('Rive loaded!');
+            r.resizeDrawingSurfaceToCanvas();
+          }
+        });
+      })
+      .catch(err => console.error('Error:', err));
+  </script>
+</body>
+</html>

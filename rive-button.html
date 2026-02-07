@@ -3,40 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aya Interactive Button</title>
     <script src="https://unpkg.com/@rive-app/canvas@2.7.0"></script>
     <style>
-      html, body {
+      * {
         margin: 0;
         padding: 0;
+        box-sizing: border-box;
+      }
+      html, body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #1a1a1a;
+      }
+      #rive-container {
         width: 100%;
         height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        background: #1a1a1a;
-        overflow: hidden;
-      }
-      canvas {
-        width: 500px;
-        height: 500px;
-        display: block;
       }
     </style>
   </head>
   <body>
-    <canvas id="rive-canvas" width="500" height="500"></canvas>
+    <div id="rive-container"></div>
+    
     <script>
-      const canvas = document.getElementById("rive-canvas");
-      
       const riveInstance = new rive.Rive({
         src: "https://raw.githubusercontent.com/joecaplan/aya-test/main/aya_test7.riv",
-        canvas: canvas,
-        stateMachines: "State Machine 1",
+        container: document.getElementById('rive-container'),
         autoplay: true,
+        stateMachines: ["State Machine 1"],
         fit: rive.Fit.Contain,
         alignment: rive.Alignment.Center,
         onLoad: () => {
-          console.log('aya_test7 loaded - hover and click ready!');
+          console.log('✓ Loaded and ready for interaction!');
         }
       });
     </script>

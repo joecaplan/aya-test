@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script src="https://unpkg.com/@rive-app/canvas@2.7.0"></script>
+  <script>
+    new rive.Rive({
+      src: 'https://cdn.jsdelivr.net/gh/joecaplan/aya-test@main/aya_test.riv',
+      canvas: document.getElementById('canvas'),
+      autoplay: true,
+      stateMachines: 'State Machine 1',
+      fit: rive.Fit.Contain,
+      alignment: rive.Alignment.Center
+    });
+  </script>
+</body>
+</html>
+```
+
+5. Click **Commit changes**
+
+### Step 2: Use GitHub Pages to host it
+
+1. In your repo, go to **Settings** → **Pages** (left sidebar)
+2. Under "Source", select **main** branch
+3. Click **Save**
+4. Wait a minute, then your page will be live at:
+```
+   https://joecaplan.github.io/aya-test/rive-button.html

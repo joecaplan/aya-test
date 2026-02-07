@@ -1,52 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rive Button</title>
   <style>
-    * {
+    html, body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
     }
-    body {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #2a2a2a;
-    }
-    #canvas {
-      width: 600px;
-      height: 600px;
+    #rive-container {
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
 <body>
-  <canvas id="canvas" width="600" height="600"></canvas>
-  <script src="https://unpkg.com/@rive-app/canvas@2.7.0"></script>
+  <div id="rive-container"></div>
+  <script src="https://unpkg.com/@rive-app/canvas@latest"></script>
   <script>
-    const canvas = document.getElementById('canvas');
-    const riveFile = 'https://raw.githubusercontent.com/joecaplan/aya-test/main/aya_test3.riv';
-    
-    fetch(riveFile)
-      .then(response => response.arrayBuffer())
-      .then(buffer => {
-        const r = new rive.Rive({
-          buffer: buffer,
-          canvas: canvas,
-          autoplay: true,
-          stateMachines: 'State Machine 1',
-          fit: rive.Fit.Cover,
-          alignment: rive.Alignment.Center,
-          onLoad: () => {
-            console.log('Rive loaded and ready!');
-            r.resizeDrawingSurfaceToCanvas();
-          }
-        });
+    new rive.Rive({
+      src: 'https://raw.githubusercontent.com/joecaplan/aya-test/main/aya_test3.riv',
+      container: document.getElementById('rive-container'),
+      autoplay: true,
+      stateMachines: 'State Machine 1',
+      layout: new rive.Layout({
+        fit: rive.Fit.Contain,
+        alignment: rive.Alignment.Center
       })
-      .catch(err => console.error('Error loading Rive:', err));
+    });
   </script>
 </body>
 </html>

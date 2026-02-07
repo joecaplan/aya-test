@@ -3,42 +3,64 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aya Interactive Button</title>
     <script src="https://unpkg.com/@rive-app/canvas@2.7.0"></script>
     <style>
-      * {
+      html, body {
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
-      }
-      html, body {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        background: #1a1a1a;
-      }
-      #rive-container {
         width: 100%;
         height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
+        background: #1a1a1a;
+        overflow: hidden;
+      }
+      canvas {
+        width: 500px;
+        height: 500px;
+        display: block;
+      }
+      #debug {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: white;
+        font-family: monospace;
+        background: rgba(0,0,0,0.7);
+        padding: 10px;
       }
     </style>
   </head>
   <body>
-    <div id="rive-container"></div>
-    
+    <div id="debug">Loading...</div>
+    <canvas id="rive-canvas" width="500" height="500"></canvas>
     <script>
+      const canvas = document.getElementById("rive-canvas");
+      const debug = document.getElementById("debug");
+      
       const riveInstance = new rive.Rive({
-        src: "https://raw.githubusercontent.com/joecaplan/aya-test/main/aya_test7.riv",
-        container: document.getElementById('rive-container'),
+        src: "https://raw.githubusercontent.com/joecaplan/aya-test/main/aya_test8.riv",
+        canvas: canvas,
+        stateMachines: "State Machine 1",
         autoplay: true,
-        stateMachines: ["State Machine 1"],
         fit: rive.Fit.Contain,
         alignment: rive.Alignment.Center,
         onLoad: () => {
-          console.log('✓ Loaded and ready for interaction!');
+          console.log('Loaded!');
+          
+          // Log all available inputs
+          const inputs = riveInstance.stateMachineInputs("State Machine 1");
+          debug.innerHTML = `Inputs found: ${inputs.length}<br>`;
+          inputs.forEach(input => {
+            debug.innerHTML += `- ${input.name} (${input.type})<br>`;
+          });
+          
+          // Log current state every second
+          setInterval(() => {
+            const stateNames = riveInstance.stateMachineNames;
+            console.log('State machines:', stateNames);
+          }, 1000);
         }
       });
     </script>

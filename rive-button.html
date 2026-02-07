@@ -15,39 +15,29 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #f0f0f0;
+      background: #2a2a2a;
     }
     #canvas {
-      width: 500px;
-      height: 500px;
-      display: block;
+      width: 600px;
+      height: 600px;
     }
   </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
+  <canvas id="canvas" width="600" height="600"></canvas>
   <script src="https://unpkg.com/@rive-app/canvas@2.7.0"></script>
   <script>
-    const canvas = document.getElementById('canvas');
-    const riveFile = 'https://raw.githubusercontent.com/joecaplan/aya-test/main/aya_test2.riv';
-    
-    fetch(riveFile)
-      .then(response => response.arrayBuffer())
-      .then(buffer => {
-        const r = new rive.Rive({
-          buffer: buffer,
-          canvas: canvas,
-          autoplay: true,
-          stateMachines: 'State Machine 1',
-          fit: rive.Fit.Contain,
-          alignment: rive.Alignment.Center,
-          onLoad: () => {
-            console.log('Rive loaded!');
-            r.resizeDrawingSurfaceToCanvas();
-          }
-        });
-      })
-      .catch(err => console.error('Error:', err));
+    const r = new rive.Rive({
+      src: './aya_test2.riv',
+      canvas: document.getElementById('canvas'),
+      autoplay: true,
+      stateMachines: 'State Machine 1',
+      fit: rive.Fit.Cover,
+      onLoad: () => {
+        console.log('Loaded and ready for interaction!');
+        r.resizeDrawingSurfaceToCanvas();
+      }
+    });
   </script>
 </body>
 </html>

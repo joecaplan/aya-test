@@ -24,10 +24,6 @@
       left: 50%;
       transform: translate(-50%, -50%);
     }
-    #rive-container canvas {
-      width: 100% !important;
-      height: 100% !important;
-    }
   </style>
 </head>
 <body>
@@ -35,24 +31,15 @@
   
   <script src="https://unpkg.com/@rive-app/canvas@2.7.0"></script>
   <script>
-    const riveInstance = new rive.Rive({
+    new rive.Rive({
       src: 'https://raw.githubusercontent.com/joecaplan/aya-test/main/raccoon1.riv',
       container: document.getElementById('rive-container'),
       autoplay: true,
       stateMachines: ['State Machine 1'],
-      layout: new rive.Layout({
-        fit: rive.Fit.Contain,
-        alignment: rive.Alignment.Center
-      }),
+      fit: rive.Fit.Contain,
+      alignment: rive.Alignment.Center,
       onLoad: () => {
-        console.log('Raccoon loaded!');
-        // Force canvas to take up container space
-        const canvas = document.querySelector('#rive-container canvas');
-        if (canvas) {
-          canvas.width = 600;
-          canvas.height = 600;
-          console.log('Canvas resized to 600x600');
-        }
+        console.log('Raccoon loaded and ready for interaction!');
       }
     });
   </script>

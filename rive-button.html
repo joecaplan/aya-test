@@ -2,60 +2,61 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=500, height=500, initial-scale=1.0" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/@rive-app/canvas@2.7.0"></script>
-
     <style>
       html, body {
         margin: 0;
         padding: 0;
-        width: 500px;
-        height: 500px;
-        background: transparent;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #1a1a1a;
         overflow: hidden;
       }
-
       canvas {
         width: 500px;
         height: 500px;
         display: block;
-        image-rendering: crisp-edges;
       }
     </style>
   </head>
-
   <body>
     <canvas id="rive-canvas" width="500" height="500"></canvas>
-
     <script>
       const canvas = document.getElementById("rive-canvas");
-
       const riveInstance = new rive.Rive({
-        src: "aya_test4.riv",
+        src: "https://raw.githubusercontent.com/joecaplan/aya-test/main/raccoon1.riv",
         canvas: canvas,
         stateMachines: "State Machine 1",
         autoplay: true,
-        fit: rive.Fit.None, // 🔒 no scaling
+        fit: rive.Fit.Contain,
         alignment: rive.Alignment.Center,
-
         onLoad: () => {
+          console.log('Loaded!');
+          
+          // Get the inputs from the state machine
           const inputs = riveInstance.stateMachineInputs("State Machine 1");
           const hoverInput = inputs.find(i => i.name === "bool");
           const clickTrigger = inputs.find(i => i.name === "trig");
-
-          // Reset state
-          if (hoverInput) hoverInput.value = false;
-
-          canvas.addEventListener("enter", () => {
+          
+          console.log('Found inputs:', { hoverInput, clickTrigger });
+          
+          // Use mouseenter/mouseleave instead of enter/exit
+          canvas.addEventListener("mouseenter", () => {
+            console.log('Mouse entered');
             if (hoverInput) hoverInput.value = true;
           });
-
-          canvas.addEventListener("exit", () => {
+          
+          canvas.addEventListener("mouseleave", () => {
+            console.log('Mouse left');
             if (hoverInput) hoverInput.value = false;
           });
-
+          
           canvas.addEventListener("click", () => {
+            console.log('Clicked');
             if (clickTrigger) clickTrigger.fire();
           });
         }

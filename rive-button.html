@@ -31,20 +31,24 @@
         src: "https://raw.githubusercontent.com/joecaplan/aya-test/main/raccoon1.riv",
         canvas: canvas,
         stateMachines: "State Machine 1",
-        autoplay: false,
+        autoplay: false, // Changed to false
         fit: rive.Fit.Contain,
         alignment: rive.Alignment.Center,
         onLoad: () => {
           console.log('Loaded!');
           
-          // Get the inputs from the state machine
+          // Start playing manually
+          riveInstance.play();
+          
           const inputs = riveInstance.stateMachineInputs("State Machine 1");
           const hoverInput = inputs.find(i => i.name === "bool");
           const clickTrigger = inputs.find(i => i.name === "trig");
           
           console.log('Found inputs:', { hoverInput, clickTrigger });
           
-          // Use mouseenter/mouseleave instead of enter/exit
+          // Reset inputs to default state
+          if (hoverInput) hoverInput.value = false;
+          
           canvas.addEventListener("mouseenter", () => {
             console.log('Mouse entered');
             if (hoverInput) hoverInput.value = true;

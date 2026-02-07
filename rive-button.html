@@ -27,37 +27,16 @@
     <canvas id="rive-canvas" width="500" height="500"></canvas>
     <script>
       const canvas = document.getElementById("rive-canvas");
-      let isAnimating = false;
       
       const riveInstance = new rive.Rive({
-        src: "https://raw.githubusercontent.com/joecaplan/aya-test/main/aya_test6.riv",
+        src: "https://raw.githubusercontent.com/joecaplan/aya-test/main/aya_test7.riv",
         canvas: canvas,
         stateMachines: "State Machine 1",
         autoplay: true,
         fit: rive.Fit.Contain,
         alignment: rive.Alignment.Center,
         onLoad: () => {
-          console.log('Loaded!');
-          
-          const inputs = riveInstance.stateMachineInputs("State Machine 1");
-          const clickTrigger = inputs.find(i => i.name === "click");
-          
-          console.log('Click trigger:', clickTrigger);
-          
-          // Only fire trigger on actual click, with debounce
-          canvas.addEventListener("click", () => {
-            if (!isAnimating && clickTrigger) {
-              console.log('Firing click trigger');
-              clickTrigger.fire();
-              isAnimating = true;
-              
-              // Reset after animation duration (adjust time as needed)
-              setTimeout(() => {
-                isAnimating = false;
-                console.log('Ready for next click');
-              }, 1000); // Adjust this to match your animation duration
-            }
-          });
+          console.log('aya_test7 loaded - hover and click ready!');
         }
       });
     </script>

@@ -47,15 +47,15 @@
           // Reset state
           if (hoverInput) hoverInput.value = false;
 
-          canvas.addEventListener("pointerenter", () => {
+          canvas.addEventListener("enter", () => {
             if (hoverInput) hoverInput.value = true;
           });
 
-          canvas.addEventListener("pointerleave", () => {
+          canvas.addEventListener("exit", () => {
             if (hoverInput) hoverInput.value = false;
           });
 
-          canvas.addEventListener("pointerdown", () => {
+          canvas.addEventListener("click", () => {
             if (clickTrigger) clickTrigger.fire();
           });
         }

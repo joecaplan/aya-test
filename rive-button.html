@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Rive Canvas Runtime -->
     <script src="https://unpkg.com/@rive-app/canvas@latest"></script>
 
     <style>
@@ -15,13 +14,12 @@
         height: 100%;
         background: transparent;
         overflow: hidden;
-        cursor: pointer;
       }
 
       canvas {
-        display: block;
         width: 100%;
         height: 100%;
+        display: block;
       }
     </style>
   </head>
@@ -36,27 +34,30 @@
         src: "aya_test3.riv",
         canvas: canvas,
         stateMachines: "State Machine 1",
-        autoplay: true,
+        autoplay: false, // 🚫 important
         fit: rive.Fit.Contain,
         alignment: rive.Alignment.Center,
+
         onLoad: () => {
           const inputs = riveInstance.stateMachineInputs("State Machine 1");
-
           const hoverInput = inputs.find(i => i.name === "bool");
           const clickTrigger = inputs.find(i => i.name === "trig");
 
+          // Explicitly reset inputs on load
+          if (hoverInput) hoverInput.value = false;
+
           // Hover ON
-          canvas.addEventListener("mouseenter", () => {
+          canvas.addEventListener("pointerenter", () => {
             if (hoverInput) hoverInput.value = true;
           });
 
           // Hover OFF
-          canvas.addEventListener("mouseleave", () => {
+          canvas.addEventListener("pointerleave", () => {
             if (hoverInput) hoverInput.value = false;
           });
 
           // Click trigger
-          canvas.addEventListener("click", () => {
+          canvas.addEventListener("pointerdown", () => {
             if (clickTrigger) clickTrigger.fire();
           });
         }

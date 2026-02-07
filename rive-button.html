@@ -27,40 +27,47 @@
     <canvas id="rive-canvas" width="500" height="500"></canvas>
     <script>
       const canvas = document.getElementById("rive-canvas");
+      
+      // Don't use autoplay and don't fire anything automatically
       const riveInstance = new rive.Rive({
         src: "https://raw.githubusercontent.com/joecaplan/aya-test/main/aya_test4.riv",
         canvas: canvas,
         stateMachines: "State Machine 1",
-        autoplay: false,
+        autoplay: true, // Keep autoplay for the state machine to run
         fit: rive.Fit.Contain,
         alignment: rive.Alignment.Center,
         onLoad: () => {
           console.log('Loaded!');
           
-          // Start playing manually
-          riveInstance.play();
-          
           const inputs = riveInstance.stateMachineInputs("State Machine 1");
+          console.log('All inputs:', inputs);
+          
           const hoverInput = inputs.find(i => i.name === "bool");
           const clickTrigger = inputs.find(i => i.name === "trig");
           
-          console.log('Found inputs:', { hoverInput, clickTrigger });
+          // DON'T fire the trigger - only set hover to false
+          if (hoverInput) {
+            hoverInput.value = false;
+            console.log('Hover set to false');
+          }
           
-          // Reset inputs to default state
-          if (hoverInput) hoverInput.value = false;
+          // Log if trigger exists but don't fire it
+          if (clickTrigger) {
+            console.log('Click trigger found but NOT firing it');
+          }
           
           canvas.addEventListener("mouseenter", () => {
-            console.log('Mouse entered');
+            console.log('Mouse entered - setting hover true');
             if (hoverInput) hoverInput.value = true;
           });
           
           canvas.addEventListener("mouseleave", () => {
-            console.log('Mouse left');
+            console.log('Mouse left - setting hover false');
             if (hoverInput) hoverInput.value = false;
           });
           
           canvas.addEventListener("click", () => {
-            console.log('Clicked');
+            console.log('CLICK - firing trigger NOW');
             if (clickTrigger) clickTrigger.fire();
           });
         }

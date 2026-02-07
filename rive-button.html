@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=500, height=500, initial-scale=1.0" />
 
     <script src="https://unpkg.com/@rive-app/canvas@latest"></script>
 
@@ -10,22 +10,23 @@
       html, body {
         margin: 0;
         padding: 0;
-        width: 100%;
-        height: 100%;
+        width: 500px;
+        height: 500px;
         background: transparent;
         overflow: hidden;
       }
 
       canvas {
-        width: 100%;
-        height: 100%;
+        width: 500px;
+        height: 500px;
         display: block;
+        image-rendering: crisp-edges;
       }
     </style>
   </head>
 
   <body>
-    <canvas id="rive-canvas"></canvas>
+    <canvas id="rive-canvas" width="500" height="500"></canvas>
 
     <script>
       const canvas = document.getElementById("rive-canvas");
@@ -34,8 +35,8 @@
         src: "aya_test3.riv",
         canvas: canvas,
         stateMachines: "State Machine 1",
-        autoplay: false, // 🚫 important
-        fit: rive.Fit.Contain,
+        autoplay: false,
+        fit: rive.Fit.None, // 🔒 no scaling
         alignment: rive.Alignment.Center,
 
         onLoad: () => {
@@ -43,20 +44,17 @@
           const hoverInput = inputs.find(i => i.name === "bool");
           const clickTrigger = inputs.find(i => i.name === "trig");
 
-          // Explicitly reset inputs on load
+          // Reset state
           if (hoverInput) hoverInput.value = false;
 
-          // Hover ON
           canvas.addEventListener("pointerenter", () => {
             if (hoverInput) hoverInput.value = true;
           });
 
-          // Hover OFF
           canvas.addEventListener("pointerleave", () => {
             if (hoverInput) hoverInput.value = false;
           });
 
-          // Click trigger
           canvas.addEventListener("pointerdown", () => {
             if (clickTrigger) clickTrigger.fire();
           });

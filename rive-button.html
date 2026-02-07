@@ -30,4 +30,22 @@
     const canvas = document.getElementById('canvas');
     
     // Use the new rive file
-    const r
+    const riveFile = 'https://raw.githubusercontent.com/joecaplan/aya-test/main/aya_test2.riv';
+    
+    fetch(riveFile)
+      .then(response => response.arrayBuffer())
+      .then(buffer => {
+        new rive.Rive({
+          buffer: buffer,
+          canvas: canvas,
+          autoplay: true,
+          stateMachines: 'State Machine 1',
+          fit: rive.Fit.Contain,
+          alignment: rive.Alignment.Center,
+          onLoad: () => console.log('Rive loaded successfully!')
+        });
+      })
+      .catch(err => console.error('Error loading Rive:', err));
+  </script>
+</body>
+</html>

@@ -3,23 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Testin some lotuses 3</title>
+    <title>Rive Button</title>
+    <script src="https://unpkg.com/@rive-app/canvas@2.7.0"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html, body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden; /* This prevents scrollbars */
+        background: transparent;
+      }
+      #rive-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden; /* Extra insurance */
+      }
+    </style>
   </head>
   <body>
-    <canvas id="canvas" width="500" height="500"></canvas>
-
-    <script src="https://unpkg.com/@rive-app/canvas"></script>
+    <div id="rive-container"></div>
+    
     <script>
-      const r = new rive.Rive({
-        src: "https://raw.githubusercontent.com/joecaplan/aya-test/main/aya_test3.riv",
-        canvas: document.getElementById("canvas"),
+      const riveInstance = new rive.Rive({
+        src: "https://raw.githubusercontent.com/joecaplan/aya-test/main/raccoon1.riv",
+        container: document.getElementById('rive-container'),
         autoplay: true,
-        // artboard: "Arboard", // Optional. If not supplied the default is selected
-        stateMachines: "Button Machine",
+        stateMachines: ["State Machine 1"],
+        fit: rive.Fit.Contain,
+        alignment: rive.Alignment.Center,
         onLoad: () => {
-          // Ensure the drawing surface matches the canvas size and device pixel ratio
-          r.resizeDrawingSurfaceToCanvas();
-        },
+          console.log('Loaded!');
+        }
       });
     </script>
   </body>

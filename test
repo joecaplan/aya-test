@@ -11,11 +11,11 @@
     <script src="https://unpkg.com/@rive-app/canvas"></script>
     <script>
       const r = new rive.Rive({
-        src: "https://cdn.rive.app/animations/vehicles.riv",
+        src: "https://raw.githubusercontent.com/joecaplan/aya-test/main/typewriter_test_01.riv",
         canvas: document.getElementById("canvas"),
         autoplay: true,
-        // artboard: "Arboard", // Optional. If not supplied the default is selected
-        stateMachines: "bumpy",
+        // artboard: "Artboard", // Optional. If not supplied the default is selected
+        stateMachines: "State Machine 1",
         onLoad: () => {
           // Ensure the drawing surface matches the canvas size and device pixel ratio
           r.resizeDrawingSurfaceToCanvas();

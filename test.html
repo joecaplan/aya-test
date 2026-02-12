@@ -3,33 +3,57 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rive Test2</title>
+    <title>Rive Test2 - Script</title>
   </head>
   <body>
     <canvas id="canvas" width="500" height="500"></canvas>
-    <script src="https://unpkg.com/@rive-app/canvas@latest"></script>
+    <!-- Use the WebAssembly runtime for better script support -->
+    <script src="https://unpkg.com/@rive-app/canvas-advanced@latest"></script>
     <script>
-      const r = new rive.Rive({
-        src: "https://raw.githubusercontent.com/joecaplan/aya-test/main/test2.riv",
-        canvas: document.getElementById("canvas"),
-        autoplay: true,
-        stateMachines: "State Machine 1",
-        enableRiveAssetLoader: true,
-        onLoad: () => {
-          console.log('✓ Loaded!');
-          console.log('State machines:', r.stateMachineNames);
-          console.log('Animations:', r.animationNames);
+      (async () => {
+        // Wait for Rive to be ready
+        const rive = await RiveCanvas();
+        
+        // Load the file
+        const bytes = await (
+          await fetch("https://raw.githubusercontent.com/joecaplan/aya-test/main/test2.riv")
+        ).arrayBuffer();
+        
+        const file = await rive.load(new Uint8Array(bytes));
+        const artboard = file.defaultArtboard();
+        const stateMachine = new rive.StateMachineInstance(
+          artboard.stateMachineByName("State Machine 1"),
+          artboard
+        );
+        
+        console.log('Script state machine loaded!');
+        
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const renderer = rive.makeRenderer(canvas);
+        
+        // Animation loop
+        let lastTime = 0;
+        function draw(time) {
+          if (!lastTime) lastTime = time;
+          const elapsedMs = time - lastTime;
+          lastTime = time;
           
-          r.resizeDrawingSurfaceToCanvas();
+          // Advance the state machine
+          stateMachine.advance(elapsedMs / 1000);
           
-          // Try to get inputs to see what's available
-          const inputs = r.stateMachineInputs("State Machine 1");
-          console.log('Inputs:', inputs.map(i => i.name));
-        },
-        onLoadError: (err) => {
-          console.error('Error:', err);
+          // Draw
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          renderer.save();
+          artboard.advance(elapsedMs / 1000);
+          artboard.draw(renderer);
+          renderer.restore();
+          
+          requestAnimationFrame(draw);
         }
-      });
+        
+        requestAnimationFrame(draw);
+      })();
     </script>
   </body>
 </html>

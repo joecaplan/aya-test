@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rive Hello World</title>
+    <title>Rive Test2</title>
   </head>
   <body>
     <canvas id="canvas" width="500" height="500"></canvas>
@@ -16,9 +16,19 @@
         stateMachines: "State Machine 1",
         enableRiveAssetLoader: true,
         onLoad: () => {
-          // Ensure the drawing surface matches the canvas size and device pixel ratio
+          console.log('✓ Loaded!');
+          console.log('State machines:', r.stateMachineNames);
+          console.log('Animations:', r.animationNames);
+          
           r.resizeDrawingSurfaceToCanvas();
+          
+          // Try to get inputs to see what's available
+          const inputs = r.stateMachineInputs("State Machine 1");
+          console.log('Inputs:', inputs.map(i => i.name));
         },
+        onLoadError: (err) => {
+          console.error('Error:', err);
+        }
       });
     </script>
   </body>

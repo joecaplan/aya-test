@@ -2,14 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Rive Text Test</title>
+  <title>Rive JS tutorial</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-  html,body{height:100%;margin:0}body{display:flex;justify-content:center;align-items:center;background:#232323}canvas{width:500px}</style>
+    html,body{height:100%;margin:0}
+    body{display:flex;flex-direction:column;justify-content:center;align-items:center;background:#232323;font-family:Arial,sans-serif}
+    canvas{width:500px}
+    #text-display{
+      color:#fff;
+      font-size:48px;
+      margin-top:20px;
+      min-height:60px;
+      user-select:text;
+      -webkit-user-select:text;
+      -moz-user-select:text;
+      -ms-user-select:text;
+    }
+  </style>
   <script src="https://unpkg.com/@rive-app/webgl2"></script>
 </head>
 <body>
   <canvas id="rive-canvas" width="500" height="500"></canvas>
+  <div id="text-display"></div>
+  
   <script>
     const r = new rive.Rive({
       src:'textTest.riv', 
@@ -32,6 +47,7 @@
 
     function startTypewriterAnimation(vmi) {
       const names = ['Joseph', 'Lyn', 'Taylor', 'Roy', 'Noel'];
+      const textDisplay = document.getElementById('text-display');
       let currentNameIndex = 0;
 
       async function animateName() {
@@ -39,7 +55,9 @@
         
         // Type out the name
         for (let i = 0; i <= name.length; i++) {
-          vmi.string('inputName').value = name.substring(0, i);
+          const currentText = name.substring(0, i);
+          vmi.string('inputName').value = currentText;
+          textDisplay.textContent = currentText; // Update HTML text
           await sleep(100);
         }
         
@@ -48,7 +66,9 @@
         
         // Backspace the name
         for (let i = name.length; i >= 0; i--) {
-          vmi.string('inputName').value = name.substring(0, i);
+          const currentText = name.substring(0, i);
+          vmi.string('inputName').value = currentText;
+          textDisplay.textContent = currentText; // Update HTML text
           await sleep(50);
         }
         

@@ -5,26 +5,11 @@
   <title>Rive JS tutorial</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    html,body{height:100%;margin:0}
-    body{display:flex;flex-direction:column;justify-content:center;align-items:center;background:#232323;font-family:Arial,sans-serif}
-    canvas{width:500px}
-    #text-display{
-      color:#fff;
-      font-size:48px;
-      margin-top:20px;
-      min-height:60px;
-      user-select:text;
-      -webkit-user-select:text;
-      -moz-user-select:text;
-      -ms-user-select:text;
-    }
-  </style>
+  html,body{height:100%;margin:0}body{display:flex;justify-content:center;align-items:center;background:#232323}canvas{width:500px}</style>
   <script src="https://unpkg.com/@rive-app/webgl2"></script>
 </head>
 <body>
   <canvas id="rive-canvas" width="500" height="500"></canvas>
-  <div id="text-display"></div>
-  
   <script>
     const r = new rive.Rive({
       src:'textTest.riv', 
@@ -37,6 +22,8 @@
       onLoad: function() {
         let vmi = r.viewModelInstance;
         r.resizeDrawingSurfaceToCanvas();
+        vmi.number('paddingWidth').value = 10,
+        vmi.number('paddingHeight').value = -8,
         
         // Start the typewriter animation
         startTypewriterAnimation(vmi);
@@ -46,31 +33,30 @@
     addEventListener('resize',()=>r.resizeDrawingSurfaceToCanvas());
 
     function startTypewriterAnimation(vmi) {
-      const names = ['Joseph', 'Lyn', 'Taylor', 'Roy', 'Noel'];
-      const textDisplay = document.getElementById('text-display');
+      const names = ['adventure', 'explore', 'freedom', 'journey', 'discover', 'impact', 'flexibility', 'thrill', 'growth', 'community'];
       let currentNameIndex = 0;
 
       async function animateName() {
         const name = names[currentNameIndex];
         
         // Type out the name
-        for (let i = 0; i <= name.length; i++) {
-          const currentText = name.substring(0, i);
-          vmi.string('inputName').value = currentText;
-          textDisplay.textContent = currentText; // Update HTML text
+        for (let i = 1; i <= name.length; i++) {
+          vmi.string('inputName').value = name.substring(0, i);
           await sleep(100);
         }
         
-        // Wait 2 seconds on the complete name
-        await sleep(2000);
+        // Wait 3 seconds on the complete name
+        await sleep(3000);
         
         // Backspace the name
-        for (let i = name.length; i >= 0; i--) {
-          const currentText = name.substring(0, i);
-          vmi.string('inputName').value = currentText;
-          textDisplay.textContent = currentText; // Update HTML text
+        for (let i = name.length; i >= 1; i--) {
+          vmi.string('inputName').value = name.substring(0, i);
           await sleep(50);
         }
+        
+        // Add a space between words
+        vmi.string('inputName').value = ' ';
+        await sleep(300);
         
         // Move to next name (loop back to start)
         currentNameIndex = (currentNameIndex + 1) % names.length;

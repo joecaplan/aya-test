@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Rive JS tutorial</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+  html,body{height:100%;margin:0}body{display:flex;justify-content:center;align-items:center;background:#232323}canvas{width:500px}</style>
+  <script src="https://unpkg.com/@rive-app/webgl2"></script>
+</head>
+<body>
+  <canvas id="rive-canvas" width="500" height="500"></canvas>
+  <script>
+    const r = new rive.Rive({
+      src:'textTest.riv', 
+      canvas:document.getElementById('rive-canvas'),
+      autoplay:true,
+      autoBind: true,
+      artboard:'Artboard', 
+      stateMachines:'State Machine 1',
+
+      onLoad: function() {
+        let vmi = r.viewModelInstance;
+        r.resizeDrawingSurfaceToCanvas();
+        
+        // Start the typewriter animation
+        startTypewriterAnimation(vmi);
+      }
+    });
+    
+    addEventListener('resize',()=>r.resizeDrawingSurfaceToCanvas());
+
+    function startTypewriterAnimation(vmi) {
+      const names = ['Joseph', 'Lyn', 'Taylor', 'Roy', 'Noel'];
+      let currentNameIndex = 0;
+
+      async function animateName() {
+        const name = names[currentNameIndex];
+        
+        // Type out the name
+        for (let i = 0; i <= name.length; i++) {
+          vmi.string('inputName').value = name.substring(0, i);
+          await sleep(100);
+        }
+        
+        // Wait 2 seconds on the complete name
+        await sleep(2000);
+        
+        // Backspace the name
+        for (let i = name.length; i >= 0; i--) {
+          vmi.string('inputName').value = name.substring(0, i);
+          await sleep(50);
+        }
+        
+        // Move to next name (loop back to start)
+        currentNameIndex = (currentNameIndex + 1) % names.length;
+        
+        // Continue the loop
+        animateName();
+      }
+
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      // Start the animation loop
+      animateName();
+    }
+  </script>
+</body>
+</html>

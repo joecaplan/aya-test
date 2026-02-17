@@ -1,0 +1,1955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joe's Cool Brackets</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000000;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            color: #00ff00;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            opacity: 0.08;
+            z-index: 1;
+            animation: spin 20s linear infinite;
+            pointer-events: none;
+            background: radial-gradient(circle, #00ff00 0%, transparent 70%);
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise" seed="2"/><feColorMatrix in="noise" type="saturate" values="0"/><feBlend in="SourceGraphic" in2="noise" mode="overlay"/></filter><rect width="100" height="100" fill="%23000000" opacity="0.03" filter="url(%23noise)"/></svg>');
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            color: #00ff00;
+            margin-bottom: 30px;
+            border: 3px solid #00ff00;
+            padding: 15px;
+            background: #001100;
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            text-shadow: 0 0 5px #00ff00;
+            letter-spacing: 1px;
+        }
+
+        .setup-section {
+            background: #001100;
+            padding: 30px;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin-reverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #00ff00;
+            background: #001100;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.3s;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1em;
+            background: #000000;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        button:hover {
+            background: #003300;
+            box-shadow: 0 0 20px #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        button:disabled {
+            background: #001100;
+            color: #008800;
+            cursor: not-allowed;
+            box-shadow: 0 0 5px #008800;
+        }
+
+        .api-key-section {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #00ff00;
+        }
+
+        .api-key-section label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #00ff00;
+        }
+
+        input[type="password"] {
+            padding: 10px;
+            width: 100%;
+            border: 2px solid #00ff00;
+            background: #001100;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .loading {
+            text-align: center;
+            color: #00ff00;
+            font-size: 1.1em;
+            margin: 20px 0;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #008800;
+            border-top: 3px solid #00ff00;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1#header-title {
+            min-height: 1.2em;
+        }
+
+        @keyframes blink-cursor {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        .cursor {
+            animation: blink-cursor 1s infinite;
+            display: inline;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #001100;
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+        }
+
+        input:not(:checked) ~ .toggle-slider {
+            background-color: #110000;
+            border-color: #ff0000;
+            box-shadow: 0 0 10px #ff0000;
+        }
+
+        .toggle-slider:before {
+            content: '';
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #00ff00;
+            transition: 0.3s;
+            box-shadow: 0 0 5px #00ff00;
+        }
+
+        input:not(:checked) ~ .toggle-slider:before {
+            background-color: #ff0000;
+            box-shadow: 0 0 5px #ff0000;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(32px);
+        }
+
+        .toggle-label {
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .home-button {
+            background: #000000;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            box-shadow: 0 0 10px #00ff00;
+            transition: all 0.2s;
+            font-size: 0.9em;
+        }
+
+        .home-button:hover {
+            box-shadow: 0 0 20px #00ff00;
+            background: #003300;
+        }
+
+        .slider-option.active {
+            animation: blink 1s infinite;
+        }
+
+        .bracket-section {
+            display: none;
+        }
+
+        .main-matchup-container {
+            background: #001100;
+            padding: 40px;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .round-indicator {
+            color: #00ff00;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .matchup-vs {
+            display: flex;
+            gap: 20px;
+            margin: 30px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .contender {
+            flex: 1;
+            min-width: 250px;
+            padding: 30px;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 3px solid #00ff00;
+            background: #001100;
+            color: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .contender:hover {
+            background: #003300;
+            box-shadow: 0 0 25px #00ff00;
+            transform: none;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .contender.selected {
+            background: #003300;
+            color: #ffffff;
+            border-color: #00ff00;
+            transform: none;
+            box-shadow: 0 0 30px #00ff00;
+        }
+
+        .vs-text {
+            display: flex;
+            align-items: center;
+            font-size: 2em;
+            color: #00ff00;
+            font-weight: bold;
+            margin: 0 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .contenders-box {
+            background: #001100;
+            padding: 25px;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+            margin-bottom: 30px;
+        }
+
+        .contenders-box h3 {
+            color: #00ff00;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .contenders-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .contender-tag {
+            background: #001100;
+            color: #00ff00;
+            padding: 12px 15px;
+            border: 2px solid #00ff00;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 0 10px #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+
+        .losers-box {
+            background: #001100;
+            padding: 25px;
+            border: 3px solid #ff0000;
+            box-shadow: 0 0 20px #ff0000;
+            margin-bottom: 30px;
+        }
+
+        .losers-box h3 {
+            color: #ff0000;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px #ff0000;
+        }
+
+        /* Bracket Visualization */
+        .bracket-visualization {
+            background: #001100;
+            padding: 20px;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        .bracket-container-mm {
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            gap: 40px;
+            min-width: min-content;
+        }
+
+        .bracket-half {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .bracket-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 120px;
+        }
+
+        .bracket-section-label {
+            color: #00ff00;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75em;
+            text-align: center;
+            text-shadow: 0 0 5px #00ff00;
+            margin-bottom: 5px;
+        }
+
+        .bracket-item {
+            border: 1px solid #00ff00;
+            padding: 6px 8px;
+            background: #001100;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7em;
+            text-align: center;
+            word-wrap: break-word;
+            box-shadow: 0 0 5px #00ff00;
+            min-height: 28px;
+            max-width: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+        }
+
+        .bracket-item.active {
+            background: #003300;
+            border-color: #00ff00;
+            box-shadow: 0 0 15px #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .bracket-item.empty {
+            opacity: 0.2;
+        }
+
+        .bracket-finals {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .bracket-champion {
+            border: 2px solid #00ff00;
+            padding: 10px;
+            background: #001100;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            text-align: center;
+            box-shadow: 0 0 10px #00ff00;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+        }
+
+        .losers-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .loser-tag {
+            background: #001100;
+            color: #ff0000;
+            padding: 12px 15px;
+            border: 2px solid #ff0000;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-align: center;
+            opacity: 0.9;
+            box-shadow: 0 0 10px #ff0000;
+            font-family: 'Courier New', monospace;
+        }
+
+        .champion-section {
+            background: #001100;
+            padding: 30px;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 30px #00ff00;
+            text-align: center;
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .champion-section h2 {
+            color: #00ff00;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .champion-name {
+            font-size: 2em;
+            color: #00ff00;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+
+        .champion-image {
+            width: 300px;
+            height: 300px;
+            margin: 30px auto;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+            object-fit: cover;
+        }
+
+        .reset-button {
+            background: #000000;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            margin-top: 20px;
+            box-shadow: 0 0 15px #00ff00;
+        }
+
+        .reset-button:hover {
+            background: #003300;
+            box-shadow: 0 0 25px #00ff00;
+        }
+
+        /* Fireworks */
+        .fireworks {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+        }
+
+        /* Slider */
+        .slider-section {
+            background: #001100;
+            padding: 20px;
+            border: 2px solid #00ff00;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px #00ff00;
+        }
+
+        .slider-label {
+            color: #00ff00;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.1em;
+            text-shadow: 0 0 10px #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .slider-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .slider-option {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border: 2px solid #00ff00;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            background: #001100;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .slider-option.active {
+            background: #003300;
+            color: #ffffff;
+            border-color: #00ff00;
+            transform: none;
+            box-shadow: 0 0 20px #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+            animation: blink 1s infinite;
+        }
+
+        .slider-option:hover {
+            border-color: #00ff00;
+            box-shadow: 0 0 15px #00ff00;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .modal-content {
+            background-color: #001100;
+            margin: 5% auto;
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 30px #00ff00;
+        }
+
+        .modal h2 {
+            color: #00ff00;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-input {
+            padding: 12px;
+            border: 2px solid #00ff00;
+            font-size: 0.95em;
+            width: 100%;
+            background: #001100;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .option-input:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .blank-form-section {
+            margin-bottom: 30px;
+        }
+
+        .blank-form-section label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .blank-form-section input {
+            padding: 12px;
+            width: 100%;
+            border: 2px solid #00ff00;
+            font-size: 1em;
+            margin-bottom: 10px;
+            background: #001100;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .blank-form-section input:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        .blank-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .blank-option-input {
+            padding: 10px;
+            border: 2px solid #00ff00;
+            font-size: 0.9em;
+            background: #001100;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .blank-option-input:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        .error {
+            color: #00ff00;
+            background: #001100;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 15px #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+
+        .info {
+            color: #00ff00;
+            background: #001100;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #00ff00;
+            font-size: 0.9em;
+            box-shadow: 0 0 15px #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Spinning background graphics */
+        .computer-graphic {
+            clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+        }
+
+        .basketball-graphic {
+            border-radius: 50%;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .bracket-container {
+                flex-direction: column;
+            }
+
+            .round {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <audio id="bgMusic" autoplay loop style="display: none;">
+        <source src="kolache_vaporwave_v1.wav" type="audio/wav">
+    </audio>
+    
+    <div class="container">
+        <header>
+            <h1 id="header-title">> JOE'S COOL BRACKETS _</h1>
+            <p>CREATE YOUR BRACKET AND VOTE ON YOUR FAVORITES</p>
+            <div class="header-controls">
+                <button class="home-button" onclick="resetGame()">[HOME]</button>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="toggle-label">MUSIC</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="musicToggle" checked onchange="toggleMusic()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </header>
+
+        <!-- Setup Section -->
+        <div class="setup-section" id="setupSection">
+            <div class="slider-section">
+                <div class="slider-label">Select Bracket Size:</div>
+                <div class="slider-container">
+                    <div class="slider-options">
+                        <div class="slider-option active" onclick="setBracketSize(8)" data-size="8">8</div>
+                        <div class="slider-option" onclick="setBracketSize(16)" data-size="16">16</div>
+                        <div class="slider-option" onclick="setBracketSize(32)" data-size="32">32</div>
+                        <div class="slider-option" onclick="setBracketSize(64)" data-size="64">64</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <h2 style="color: #00ff00; margin-bottom: 15px; text-shadow: 0 0 10px #00ff00; font-family: 'Courier New', monospace;">Choose a Category</h2>
+                <div id="categoryButtons" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; auto-rows: minmax(60px, auto);">
+                </div>
+                <div style="margin-top: 15px;">
+                    <button id="blankButton" style="width: 100%; background: #000000; padding: 12px 30px; font-size: 1em; border: 2px solid #00ff00; border-radius: 0; cursor: pointer; font-weight: bold; color: #00ff00; font-family: 'Courier New', monospace; box-shadow: 0 0 15px #00ff00;">CREATE YOUR OWN BRACKET</button>
+                </div>
+            </div>
+            <div id="messageContainer"></div>
+        </div>
+
+        <!-- Champion Section -->
+        <!-- Edit Options Modal -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <h2>Edit Bracket Options</h2>
+                <div class="options-grid" id="editOptionsGrid"></div>
+                <div class="modal-buttons">
+                    <button onclick="startBracketFromEdited()">Start Bracket</button>
+                    <button onclick="closeEditModal()" style="background: #999;">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blank Bracket Modal -->
+        <div id="blankModal" class="modal">
+            <div class="modal-content">
+                <h2>Create Your Bracket</h2>
+                <div class="blank-form-section">
+                    <label for="blankCategory">Bracket Name (Optional):</label>
+                    <input type="text" id="blankCategory" placeholder="e.g., My Favorites" />
+                </div>
+                <div class="blank-form-section">
+                    <label>Enter your options:</label>
+                    <div class="blank-options-grid" id="blankOptionsGrid"></div>
+                </div>
+                <div class="modal-buttons">
+                    <button onclick="startBlankBracket()">Start Bracket</button>
+                    <button onclick="closeBlankModal()" style="background: #999;">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="champion-section" id="championSection">
+            <h2>[CHAMPION CROWNED]</h2>
+            <div class="champion-name" id="championName"></div>
+            <img id="championImage" class="champion-image" style="display: none;" />
+            <button class="reset-button" onclick="resetGame()">Start New Bracket</button>
+        </div>
+
+        <!-- Bracket Section -->
+        <div class="bracket-section" id="bracketSection">
+            <div class="main-matchup-container" id="mainMatchupContainer">
+                <div class="round-indicator" id="roundIndicator"></div>
+                <div class="matchup-vs" id="matchupVs"></div>
+            </div>
+
+            <!-- Bracket Visualization -->
+            <div class="bracket-visualization" id="bracketVisualization" style="display: none;">
+                <div class="bracket-container-mm" id="bracketContainerMM"></div>
+            </div>
+
+            <!-- Contenders Box -->
+            <div class="contenders-box">
+                <h3>[ACTIVE CONTENDERS]</h3>
+                <div class="contenders-list" id="contendersList"></div>
+            </div>
+
+            <!-- Losers Box -->
+            <div class="losers-box" id="losersBox" style="display: none;">
+                <h3>[ELIMINATED]</h3>
+                <div class="losers-list" id="losersList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Predefined bracket categories
+        const PRESET_CATEGORIES = {
+            'Pizza Types': ['Pepperoni', 'Margherita', 'BBQ Chicken', 'Hawaiian', 'Vegetarian', 'Meat Lovers', 'Buffalo Chicken', 'White Pizza', 'Truffle', 'Greek', 'Sicilian', 'Detroit', 'Neapolitan', 'Chicago Deep Dish', 'New York', 'California', 'Quattro Formaggi', 'Spinach Feta', 'Pesto', 'Seafood', 'Soppressata', 'Prosciutto', 'Arugula', 'Caramelized Onion', 'Mushroom', 'Roasted Garlic', 'Sun-Dried Tomato', 'Basil', 'Anchovies', 'After Hours', 'Breakfast Pizza', 'Stuffed Crust'],
+            'Marvel Characters': ['Iron Man', 'Captain America', 'Thor', 'Hulk', 'Black Widow', 'Hawkeye', 'Spider-Man', 'Doctor Strange', 'Black Panther', 'Captain Marvel', 'Ant-Man', 'Wasp', 'Vision', 'Scarlet Witch', 'Loki', 'Thanos', 'Deadpool', 'Wolverine', 'Cyclops', 'Professor X', 'Magneto', 'Storm', 'Beast', 'Angel', 'Nightcrawler', 'Gambit', 'Rogue', 'Daredevil', 'Jessica Jones', 'Luke Cage', 'Iron Fist', 'Punisher'],
+            'Video Games': ['The Legend of Zelda', 'Super Mario Bros', 'The Witcher 3', 'Elden Ring', 'Dark Souls', 'Minecraft', 'Fortnite', 'Call of Duty', 'Grand Theft Auto V', 'Red Dead Redemption 2', 'Halo', 'Final Fantasy VII', 'Kingdom Hearts', 'Metal Gear Solid', 'Kojima Productions', 'Starfield', 'Baldur\'s Gate 3', 'Cyberpunk 2077', 'Persona 5', 'Fire Emblem', 'God of War', 'Horizon Zero Dawn', 'The Last of Us', 'Uncharted 4', 'Ghost of Tsushima', 'Fallout 4', 'Skyrim', 'World of Warcraft', 'League of Legends', 'Dota 2', 'Counter-Strike 2', 'Valorant'],
+            'Movies': ['The Shawshank Redemption', 'The Godfather', 'The Dark Knight', 'Inception', 'Pulp Fiction', 'Forrest Gump', 'Titanic', 'Avatar', 'Avengers: Endgame', 'Fight Club', 'Goodfellas', 'The Matrix', 'Interstellar', 'Parasite', 'Everything Everywhere All at Once', 'Oppenheimer', 'Barbie', 'The Silence of the Lambs', 'Saving Private Ryan', 'Gladiator', 'The Usual Suspects', 'Se7en', 'Jaws', 'E.T.', 'Back to the Future', 'Jurassic Park', 'The Sixth Sense', 'American Beauty', 'Requiem for a Dream', 'A Beautiful Mind', 'The Departed', 'Braveheart'],
+            'Music Genres': ['Rock', 'Pop', 'Hip-Hop', 'Jazz', 'Classical', 'Electronic', 'Country', 'Blues', 'Reggae', 'Metal', 'Punk', 'R&B', 'Soul', 'Gospel', 'Folk', 'Indie', 'Synthwave', 'Ambient', 'Trance', 'House', 'Dubstep', 'Techno', 'Alternative', 'Disco', 'K-Pop', 'Trap', 'Grunge', 'Funk', 'Operatic', 'Baroque', 'Romantic', 'Modern'],
+            'Fruits': ['Apple', 'Banana', 'Orange', 'Strawberry', 'Blueberry', 'Mango', 'Pineapple', 'Watermelon', 'Grape', 'Kiwi', 'Peach', 'Pear', 'Cherry', 'Plum', 'Raspberry', 'Blackberry', 'Coconut', 'Dragon Fruit', 'Papaya', 'Passion Fruit', 'Lime', 'Lemon', 'Grapefruit', 'Avocado', 'Pomegranate', 'Fig', 'Date', 'Cranberry', 'Acai', 'Tangerine', 'Clementine', 'Guava'],
+            'Superheroes': ['Superman', 'Batman', 'Wonder Woman', 'Flash', 'Green Lantern', 'Aquaman', 'Cyborg', 'Green Arrow', 'Martian Manhunter', 'Hawkgirl', 'Black Adam', 'Shazam', 'Green Goblin', 'Magneto', 'Doctor Doom', 'Lex Luthor', 'Joker', 'Poison Ivy', 'Catwoman', 'Harley Quinn', 'Two-Face', 'Scarecrow', 'Riddler', 'Penguin', 'Mr. Freeze', 'Killer Croc', 'Bane', 'Ra\'s al Ghul', 'Black Mask', 'Deathstroke', 'Darkseid', 'Galactus'],
+            'TV Shows': ['Breaking Bad', 'The Office', 'Game of Thrones', 'Stranger Things', 'The Crown', 'The Mandalorian', 'Chernobyl', 'Fleabag', 'Succession', 'The Sopranos', 'The Wire', 'Friends', 'The Big Bang Theory', 'Orange is the New Black', 'Ozark', 'Mindhunter', 'Sex Education', 'Schitt\'s Creek', 'The Marvelous Mrs. Maisel', 'Westworld', 'Handmaid\'s Tale', 'True Detective', 'Sherlock', 'Black Mirror', 'Peaky Blinders', 'Broadchurch', 'The Boys', 'Transparent', 'Parks and Recreation', 'Brooklyn Nine-Nine', 'Seinfeld', 'Mad Men'],
+            'Anime': ['Naruto', 'One Piece', 'Bleach', 'My Hero Academia', 'Attack on Titan', 'Death Note', 'Demon Slayer', 'Jujutsu Kaisen', 'Fire Force', 'Tokyo Ghoul', 'Steins;Gate', 'Cowboy Bebop', 'Neon Genesis Evangelion', 'Fullmetal Alchemist', 'Code Geass', 'Psycho-Pass', 'Mob Psycho 100', 'One Punch Man', 'Sword Art Online', 'No Game No Life', 'Re:Zero', 'That Time I Got Reincarnated', 'Overlord', 'Goblin Slayer', 'Made in Abyss', 'Ergo Proxy', 'Samurai Champloo', 'Kill la Kill', 'Gurren Lagann', 'Sailor Moon', 'Dragon Ball', 'Yu Yu Hakusho'],
+            'Books': ['Harry Potter', 'The Lord of the Rings', 'A Song of Ice and Fire', 'The Wheel of Time', 'Dune', 'The Foundation Series', 'Ender\'s Game', 'The Hunger Games', 'Divergent', 'The Maze Runner', 'Percy Jackson', 'The Chronicles of Narnia', 'Twilight', 'Fifty Shades', '1984', 'Brave New World', 'The Great Gatsby', 'To Kill a Mockingbird', 'Pride and Prejudice', 'Jane Eyre', 'Wuthering Heights', 'The Count of Monte Cristo', 'The Three Musketeers', 'Les Misérables', 'The Hunchback of Notre-Dame', 'Moby Dick', 'Treasure Island', 'Robinson Crusoe', 'Gulliver\'s Travels', 'Sherlock Holmes', 'Dracula', 'Frankenstein'],
+            'Car Brands': ['Toyota', 'Honda', 'BMW', 'Mercedes-Benz', 'Audi', 'Volkswagen', 'Ford', 'Chevrolet', 'GMC', 'Tesla', 'Nissan', 'Mazda', 'Subaru', 'Hyundai', 'Kia', 'Volvo', 'Jaguar', 'Land Rover', 'Porsche', 'Ferrari', 'Lamborghini', 'Maserati', 'Rolls-Royce', 'Bentley', 'Bugatti', 'McLaren', 'Aston Martin', 'Alfa Romeo', 'Lexus', 'Acura'],
+            'Pokémon': ['Pikachu', 'Charizard', 'Blastoise', 'Venusaur', 'Arcanine', 'Lapras', 'Dragonite', 'Mewtwo', 'Mew', 'Articuno', 'Zapdos', 'Moltres', 'Alakazam', 'Gengar', 'Machamp', 'Golem', 'Arbok', 'Pidgeot', 'Raichu', 'Vileplume', 'Golbat', 'Gloom', 'Parasect', 'Venonat', 'Diglett', 'Persian', 'Psyduck', 'Growlithe', 'Poliwag', 'Abra', 'Slowpoke', 'Seel'],
+            'Celebrities': ['Tom Cruise', 'Tom Hanks', 'Brad Pitt', 'Leonardo DiCaprio', 'Johnny Depp', 'Will Smith', 'Morgan Freeman', 'Denzel Washington', 'Meryl Streep', 'Angelina Jolie', 'Jennifer Lawrence', 'Emma Stone', 'Scarlett Johansson', 'Cate Blanchett', 'Kate Winslet', 'Natalie Portman', 'Marion Cotillard', 'Michelle Pfeiffer', 'Audrey Hepburn', 'Sophia Loren', 'Elizabeth Taylor', 'Marilyn Monroe', 'James Dean', 'Humphrey Bogart', 'Muhammad Ali', 'Michael Jordan', 'Cristiano Ronaldo', 'Lionel Messi', 'LeBron James', 'Tiger Woods']
+        };
+
+        let bracket = {
+            round1: [],
+            round2: [],
+            round3: [],
+            round4: [],
+            round5: [],
+            round6: [],
+            champion: null,
+            category: '',
+            losers: [],
+            currentRound: 'round1',
+            currentMatchup: 0,
+            size: 32
+        };
+
+        let bracketSize = 32;
+        let editingOptions = [];
+
+        // Set bracket size
+        function setBracketSize(size) {
+            bracketSize = size;
+            document.querySelectorAll('.slider-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.dataset.size == size) {
+                    option.classList.add('active');
+                }
+            });
+        }
+
+        // Edit modal functions
+        function openEditModal(options) {
+            editingOptions = [...options];
+            const grid = document.getElementById('editOptionsGrid');
+            grid.innerHTML = editingOptions.map((opt, idx) => 
+                `<input type="text" class="option-input" value="${opt}" data-idx="${idx}" onchange="updateEditingOption(this)" />`
+            ).join('');
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function updateEditingOption(input) {
+            editingOptions[parseInt(input.dataset.idx)] = input.value;
+        }
+
+        function startBracketFromEdited() {
+            const category = bracket.category || 'Custom';
+            startBracketWithOptions(editingOptions, category);
+            closeEditModal();
+        }
+
+        // Blank bracket modal functions
+        function openBlankModal() {
+            const grid = document.getElementById('blankOptionsGrid');
+            grid.innerHTML = Array(bracketSize).fill(0).map((_, idx) => 
+                `<input type="text" class="blank-option-input" id="blankOpt${idx}" placeholder="Option ${idx + 1}" />`
+            ).join('');
+            document.getElementById('blankModal').style.display = 'block';
+        }
+
+        function closeBlankModal() {
+            document.getElementById('blankModal').style.display = 'none';
+        }
+
+        function startBlankBracket() {
+            const category = document.getElementById('blankCategory').value || 'Custom Bracket';
+            const options = Array(bracketSize).fill(0).map((_, idx) => {
+                const val = document.getElementById(`blankOpt${idx}`).value.trim();
+                return val || `Option ${idx + 1}`;
+            });
+
+            if (options.filter(o => o).length < bracketSize) {
+                alert('Please fill in all options');
+                return;
+            }
+
+            startBracketWithOptions(options, category);
+            closeBlankModal();
+        }
+
+        // Fireworks animation
+        function createFireworks() {
+            const canvas = document.createElement('canvas');
+            canvas.className = 'fireworks';
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            class Particle {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.vx = (Math.random() - 0.5) * 12;
+                    this.vy = (Math.random() - 0.5) * 12;
+                    this.life = 1;
+                    this.size = Math.random() * 5 + 3;
+                    this.color = ['#FFD700', '#FFA500', '#FF6347', '#FF1493', '#00CED1'][Math.floor(Math.random() * 5)];
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.vy += 0.2;
+                    this.life -= 0.02;
+                }
+
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.life;
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+
+            // Create initial particles
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle(window.innerWidth / 2, window.innerHeight / 2));
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+
+                particles = particles.filter(p => p.life > 0);
+
+                if (particles.length > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    canvas.remove();
+                }
+            }
+
+            animate();
+        }
+
+        // Initialize category buttons
+        function initializeCategoryButtons() {
+            const container = document.getElementById('categoryButtons');
+            Object.keys(PRESET_CATEGORIES).forEach(category => {
+                const button = document.createElement('button');
+                button.textContent = category;
+                button.onclick = () => startBracketWithCategory(category, true);
+                button.style.padding = '15px 20px';
+                button.style.fontSize = '0.95em';
+                button.style.display = 'flex';
+                button.style.alignItems = 'center';
+                button.style.justifyContent = 'center';
+                button.style.textAlign = 'center';
+                button.style.minHeight = '60px';
+                button.style.wordWrap = 'break-word';
+                button.style.whiteSpace = 'normal';
+                container.appendChild(button);
+            });
+        }
+
+        // Load saved bracket from localStorage
+        function loadBracket() {
+            const saved = localStorage.getItem('bracket');
+            if (saved) {
+                bracket = JSON.parse(saved);
+                bracketSize = bracket.size || 32;
+                displayBracket();
+                document.getElementById('setupSection').style.display = 'none';
+                document.getElementById('bracketSection').style.display = 'block';
+            }
+        }
+
+        // Save bracket to localStorage
+        function saveBracket() {
+            localStorage.setItem('bracket', JSON.stringify(bracket));
+        }
+
+        // Set up event listeners
+        document.getElementById('blankButton').addEventListener('click', openBlankModal);
+
+        function startBracketWithCategory(category, isPreset) {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = '';
+
+            let options;
+            if (isPreset && PRESET_CATEGORIES[category]) {
+                options = PRESET_CATEGORIES[category];
+            } else if (!isPreset) {
+                // For custom categories, show a message
+                messageContainer.innerHTML = '<div class="info">✓ Generating bracket options...</div>';
+                // Generate some random options for custom categories
+                options = generateRandomOptions(category);
+            } else {
+                messageContainer.innerHTML = '<div class="error">Category not found.</div>';
+                return;
+            }
+
+            // Trim to bracket size
+            options = options.slice(0, bracketSize);
+
+            // If not enough options, pad
+            while (options.length < bracketSize) {
+                options.push(`Option ${options.length + 1}`);
+            }
+
+            // Open edit modal
+            bracket.category = category;
+            messageContainer.innerHTML = '<div class="info">✓ Generated ideas for "' + category + '" - edit them as needed</div>';
+            openEditModal(options);
+        }
+
+        function startBracketWithOptions(options, category) {
+            // Initialize bracket
+            const shuffled = shuffleArray(options);
+            bracket.round1 = shuffled.map(opt => ({ name: opt, winner: null }));
+            bracket.round2 = [];
+            bracket.round3 = [];
+            bracket.round4 = [];
+            bracket.round5 = [];
+            bracket.round6 = [];
+            bracket.champion = null;
+            bracket.category = category;
+            bracket.losers = [];
+            bracket.currentRound = 'round1';
+            bracket.currentMatchup = 0;
+            bracket.size = bracketSize;
+
+            saveBracket();
+
+            // Hide setup and show bracket
+            document.getElementById('setupSection').style.display = 'none';
+            document.getElementById('bracketSection').style.display = 'block';
+            document.getElementById('championSection').style.display = 'none';
+            document.getElementById('mainMatchupContainer').style.display = 'block';
+
+            displayBracket();
+        }
+
+        function generateRandomOptions(category) {
+            // Extract the main subject from the category
+            let subject = category.toLowerCase()
+                .replace(/types? of /i, '')
+                .replace(/best /i, '')
+                .replace(/worst /i, '')
+                .replace(/favorite /i, '')
+                .replace(/top /i, '')
+                .replace(/\s+(brands?|models?|series|shows|list)$/i, '')
+                .trim();
+
+            // Use smart generation based on category keywords - check if word CONTAINS these keywords
+            if (subject.includes('pokemon')) {
+                return generatePokemonOptions(bracketSize);
+            } else if (subject.includes('car') || subject.includes('vehicle') || subject.includes('auto') || subject.includes('brand')) {
+                return generateCarBrandOptions(bracketSize);
+            } else if (subject.includes('celebrity') || subject.includes('famous') || subject.includes('actor') || subject.includes('actress') || subject.includes('star') || subject.includes('singer') || subject.includes('musician')) {
+                return generateCelebrityOptions(bracketSize);
+            } else if (subject.includes('vegetable') || subject.includes('veggie') || subject.includes('produce')) {
+                return generateVegetableOptions(bracketSize);
+            } else if (subject.includes('superhero') || subject.includes('hero') || subject.includes('villain') || subject.includes('comic')) {
+                return generateSuperheroOptions(subject, bracketSize);
+            } else if (subject.includes('tv') || subject.includes('television') || subject.includes('show') || subject.includes('series')) {
+                return generateTVShowOptions(bracketSize);
+            } else if (subject.includes('anime') || subject.includes('manga')) {
+                return generateAnimeOptions(bracketSize);
+            } else if (subject.includes('book') || subject.includes('novel') || subject.includes('author') || subject.includes('literature')) {
+                return generateBookOptions(bracketSize);
+            } else if (subject.includes('country') || subject.includes('nation') || subject.includes('place') || subject.includes('location') || subject.includes('city') || subject.includes('town')) {
+                return generateCountryOptions(bracketSize);
+            } else if (subject.includes('sport') || subject.includes('athlete') || subject.includes('team') || subject.includes('player')) {
+                return generateSportOptions(bracketSize);
+            } else if (subject.includes('restaurant') || subject.includes('cuisine') || subject.includes('chef')) {
+                return generateRestaurantOptions(bracketSize);
+            } else if (subject.includes('pizza') || subject.includes('food') || subject.includes('meal') || subject.includes('snack') || subject.includes('dessert') || subject.includes('drink') || subject.includes('beverage')) {
+                return generateFoodOptions(subject, bracketSize);
+            } else if (subject.includes('movie') || subject.includes('film') || subject.includes('episode')) {
+                return generateMovieOptions(subject, bracketSize);
+            } else if (subject.includes('music') || subject.includes('song') || subject.includes('artist') || subject.includes('band') || subject.includes('genre') || subject.includes('album') || subject.includes('track')) {
+                return generateMusicOptions(subject, bracketSize);
+            } else if (subject.includes('game') || subject.includes('video')) {
+                return generateGameOptions(subject, bracketSize);
+            } else if (subject.includes('color') || subject.includes('fruit') || subject.includes('animal') || subject.includes('plant') || subject.includes('flower') || subject.includes('tree') || subject.includes('bird') || subject.includes('fish') || subject.includes('insect')) {
+                return generateNatureOptions(subject, bracketSize);
+            } else {
+                return generateGenericOptions(subject, bracketSize);
+            }
+        }
+
+        function generatePokemonOptions(count) {
+            const allPokemon = [
+                'Pikachu', 'Charizard', 'Blastoise', 'Venusaur', 'Arcanine', 'Lapras', 'Dragonite', 'Mewtwo', 'Mew',
+                'Articuno', 'Zapdos', 'Moltres', 'Alakazam', 'Gengar', 'Machamp', 'Golem', 'Arbok', 'Pidgeot',
+                'Raichu', 'Vileplume', 'Golbat', 'Gloom', 'Parasect', 'Venonat', 'Diglett', 'Persian', 'Psyduck',
+                'Growlithe', 'Poliwag', 'Abra', 'Slowpoke', 'Seel', 'Grimer', 'Shellder', 'Haunter', 'Dragonair',
+                'Drowzee', 'Krabby', 'Exeggcute', 'Cubone', 'Hitmonlee', 'Hitmonchan', 'Lickitung', 'Rhyhorn', 'Chansey',
+                'Kangaskhan', 'Horsea', 'Goldeen', 'Staryu', 'Mr. Mime', 'Jynx', 'Electabuzz', 'Magnemite', 'Flareon',
+                'Jolteon', 'Vaporeon', 'Omanyte', 'Omastar', 'Aerodactyl', 'Snorlax', 'Ditto', 'Porygon', 'Gyarados',
+                'Nidoking', 'Nidoqueen', 'Wigglytuff', 'Crobat', 'Espeon', 'Umbreon', 'Scizor', 'Beedrill', 'Arcanine'
+            ];
+            
+            // Shuffle and return unique pokemon
+            const shuffled = [...allPokemon].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function generateSuperheroOptions(subject, count) {
+            const heroes = [
+                'Superman', 'Batman', 'Wonder Woman', 'The Flash', 'Green Lantern', 'Aquaman', 'Cyborg', 'Hawkman',
+                'Green Arrow', 'Black Canary', 'Zatanna', 'Doctor Fate', 'Shazam', 'Booster Gold', 'Blue Beetle', 'Atom',
+                'Firestorm', 'Vixen', 'Steel', 'Red Tornado', 'Metamorpho', 'Elongated Man', 'Detective Chimp', 'Lobo',
+                'Wildcat', 'Black Lightning', 'Icon', 'Rocket', 'Static Shock', 'Gear', 'Nightwing', 'Batgirl',
+                'Robin', 'Catwoman', 'Harley Quinn', 'Poison Ivy', 'Black Widow', 'Iron Man', 'Captain America', 'Thor',
+                'Hulk', 'Spider-Man', 'Doctor Strange', 'Ant-Man', 'Wasp', 'Vision', 'Scarlet Witch', 'Hawkeye'
+            ];
+            
+            const shuffled = [...heroes].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function generateFoodOptions(subject, count) {
+            const prefixes = ['Classic', 'Spicy', 'Creamy', 'Crispy', 'Grilled', 'Fried', 'Baked', 'Raw', 'Smoked', 'Glazed', 'Garlic', 'Herb', 'Citrus', 'Chocolate', 'Vanilla'];
+            const suffixes = ['Deluxe', 'Supreme', 'Special', 'Premium', 'Original', 'Signature', 'Traditional', 'Modern', 'Homestyle', 'Artisan'];
+            const options = [];
+            
+            for (let i = 0; i < count; i++) {
+                const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+                const ending = Math.random() > 0.5 ? suffixes[Math.floor(Math.random() * suffixes.length)] : '';
+                options.push(`${prefix} ${subject}${ending ? ' ' + ending : ''}`);
+            }
+            return [...new Set(options)].slice(0, count);
+        }
+
+        function generateMovieOptions(subject, count) {
+            const genres = ['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Fantasy', 'Romance', 'Thriller', 'Adventure', 'Mystery', 'Animation', 'Documentary', 'Noir', 'Western', 'Musical'];
+            const eras = ['Classic', 'Modern', '80s', '90s', '2000s', 'Recent'];
+            const options = [];
+            
+            for (let i = 0; i < count; i++) {
+                const genre = genres[Math.floor(Math.random() * genres.length)];
+                const era = Math.random() > 0.5 ? eras[Math.floor(Math.random() * eras.length)] : '';
+                options.push(`${genre}${era ? ' ' + era : ''} ${subject}`);
+            }
+            return [...new Set(options)].slice(0, count);
+        }
+
+        function generateMusicOptions(subject, count) {
+            const moods = ['Chill', 'Upbeat', 'Energetic', 'Smooth', 'Heavy', 'Light', 'Dark', 'Happy', 'Melancholic', 'Epic', 'Funky', 'Groovy', 'Ambient', 'Jazz', 'Electric'];
+            const eras = ['80s', '90s', '2000s', '2010s', 'Classic', 'Modern', 'Vintage', 'Contemporary'];
+            const options = [];
+            
+            for (let i = 0; i < count; i++) {
+                const mood = moods[Math.floor(Math.random() * moods.length)];
+                const era = Math.random() > 0.5 ? eras[Math.floor(Math.random() * eras.length)] : '';
+                options.push(`${mood}${era ? ' ' + era : ''} ${subject}`);
+            }
+            return [...new Set(options)].slice(0, count);
+        }
+
+        function generateGameOptions(subject, count) {
+            const styles = ['Action', 'RPG', 'Strategy', 'Indie', 'Competitive', 'Casual', 'Story-Driven', 'Open-World', 'Puzzle', 'Arcade', 'Roguelike', 'Platformer', 'Survival', 'Sports', 'Racing'];
+            const eras = ['Retro', 'Classic', 'Modern', 'Next-Gen', 'Indie', '8-bit', '16-bit'];
+            const options = [];
+            
+            for (let i = 0; i < count; i++) {
+                const style = styles[Math.floor(Math.random() * styles.length)];
+                const era = Math.random() > 0.5 ? eras[Math.floor(Math.random() * eras.length)] : '';
+                options.push(`${style}${era ? ' ' + era : ''} ${subject}`);
+            }
+            return [...new Set(options)].slice(0, count);
+        }
+
+        function generateCarBrandOptions(count) {
+            const brands = [
+                'Toyota', 'Honda', 'BMW', 'Mercedes-Benz', 'Audi', 'Volkswagen', 'Ford', 'Chevrolet', 'GMC', 'Tesla',
+                'Nissan', 'Mazda', 'Subaru', 'Hyundai', 'Kia', 'Volvo', 'Jaguar', 'Land Rover', 'Porsche', 'Ferrari',
+                'Lamborghini', 'Maserati', 'Rolls-Royce', 'Bentley', 'Bugatti', 'McLaren', 'Aston Martin', 'Alfa Romeo',
+                'Lexus', 'Acura', 'Infiniti', 'Cadillac', 'Lincoln', 'Chrysler', 'Dodge', 'Jeep', 'RAM', 'Buick',
+                'GMC', 'Pontiac', 'Saab', 'Suzuki', 'Daihatsu', 'Mitsubishi', 'Isuzu', 'Geely', 'BYD', 'NIO',
+                'XPeng', 'Li Auto', 'Great Wall', 'Chery', 'Dacia', 'Fiat', 'SEAT', 'Skoda', 'MG', 'Tata'
+            ];
+
+            const shuffled = [...brands].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function generateTVShowOptions(count) {
+            const shows = [
+                'Breaking Bad', 'The Office', 'Game of Thrones', 'Stranger Things', 'The Crown', 'The Mandalorian',
+                'Chernobyl', 'Fleabag', 'Succession', 'The Sopranos', 'The Wire', 'Friends', 'The Big Bang Theory',
+                'Orange is the New Black', 'Ozark', 'Mindhunter', 'Sex Education', 'Schitt\'s Creek', 'The Marvelous Mrs. Maisel',
+                'Westworld', 'Handmaid\'s Tale', 'True Detective', 'Sherlock', 'Black Mirror', 'Peaky Blinders',
+                'Broadchurch', 'The Boys', 'Transparent', 'Crazy Ex-Girlfriend', 'Parks and Recreation', 'The Good Place',
+                'Brooklyn Nine-Nine', 'The IT Crowd', 'Seinfeld', 'Mad Men', 'Dexter', 'House', 'Grey\'s Anatomy',
+                'Narcos', 'BoJack Horseman', 'Gilmore Girls', 'Lost', 'How I Met Your Mother', 'Veep', 'Billions'
+            ];
+
+            const shuffled = [...shows].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function generateAnimeOptions(count) {
+            const anime = [
+                'Naruto', 'One Piece', 'Bleach', 'My Hero Academia', 'Attack on Titan', 'Death Note', 'Demon Slayer',
+                'Jujutsu Kaisen', 'Fire Force', 'Tokyo Ghoul', 'Steins;Gate', 'Cowboy Bebop', 'Neon Genesis Evangelion',
+                'Fullmetal Alchemist', 'Code Geass', 'Psycho-Pass', 'Mob Psycho 100', 'One Punch Man', 'Sword Art Online',
+                'No Game No Life', 'Re:Zero', 'That Time I Got Reincarnated', 'Overlord', 'Goblin Slayer', 'Made in Abyss',
+                'Ergo Proxy', 'Samurai Champloo', 'Carole & Tuesday', 'Kill la Kill', 'Gurren Lagann', 'Sailor Moon',
+                'Dragon Ball', 'Saint Seiya', 'Yu Yu Hakusho', 'Hunter x Hunter', 'Beyblade', 'Pokémon', 'Digimon'
+            ];
+
+            const shuffled = [...anime].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function generateBookOptions(count) {
+            const books = [
+                'Harry Potter', 'The Lord of the Rings', 'A Song of Ice and Fire', 'The Wheel of Time', 'Dune',
+                'The Foundation Series', 'Ender\'s Game', 'The Hunger Games', 'Divergent', 'The Maze Runner',
+                'Percy Jackson', 'The Chronicles of Narnia', 'Twilight', 'Fifty Shades', '1984',
+                'Brave New World', 'The Great Gatsby', 'To Kill a Mockingbird', 'Pride and Prejudice', 'Jane Eyre',
+                'Wuthering Heights', 'The Count of Monte Cristo', 'The Three Musketeers', 'Les Misérables', 'The Hunchback of Notre-Dame',
+                'Moby Dick', 'Treasure Island', 'Robinson Crusoe', 'Gulliver\'s Travels', 'The Divine Comedy',
+                'Paradise Lost', 'Sherlock Holmes', 'Dracula', 'Frankenstein', 'The Picture of Dorian Gray',
+                'Alice in Wonderland', 'The Wonderful Wizard of Oz', 'Peter Pan', 'The Secret Garden'
+            ];
+
+            const shuffled = [...books].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function generateCountryOptions(count) {
+            const countries = [
+                'United States', 'Canada', 'Mexico', 'United Kingdom', 'France', 'Germany', 'Italy', 'Spain', 'Portugal',
+                'Japan', 'South Korea', 'China', 'India', 'Brazil', 'Argentina', 'Australia', 'New Zealand', 'South Africa',
+                'Egypt', 'Kenya', 'Nigeria', 'Russia', 'Sweden', 'Norway', 'Denmark', 'Netherlands', 'Belgium', 'Switzerland',
+                'Austria', 'Poland', 'Greece', 'Turkey', 'Thailand', 'Vietnam', 'Philippines', 'Indonesia', 'Malaysia',
+                'Singapore', 'Israel', 'Saudi Arabia', 'United Arab Emirates', 'Pakistan', 'Bangladesh', 'Sri Lanka',
+                'Costa Rica', 'Chile', 'Peru', 'Colombia', 'Venezuela', 'Ireland', 'Iceland', 'Luxembourg'
+            ];
+
+            const shuffled = [...countries].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function generateSportOptions(count) {
+            const teams = [
+                'Lakers', 'Celtics', 'Golden State Warriors', 'Chicago Bulls', 'Miami Heat', 'Boston Red Sox', 'New York Yankees',
+                'Los Angeles Dodgers', 'San Francisco Giants', 'Dallas Cowboys', 'New England Patriots', 'Green Bay Packers',
+                'Pittsburgh Steelers', 'San Francisco 49ers', 'Kansas City Chiefs', 'Manchester United', 'Liverpool',
+                'Arsenal', 'Chelsea', 'Barcelona', 'Real Madrid', 'Bayern Munich', 'Paris Saint-Germain', 'Juventus',
+                'AC Milan', 'Inter Milan', 'Tottenham Hotspur', 'Manchester City', 'Leicester City', 'Napoli', 'AS Roma',
+                'Atletico Madrid', 'Borussia Dortmund', 'Ajax', 'PSV Eindhoven', 'Benfica', 'Porto', 'Celtic', 'Rangers'
+            ];
+
+            const shuffled = [...teams].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function generateRestaurantOptions(count) {
+            const restaurants = [
+                'McDonald\'s', 'Burger King', 'Wendy\'s', 'Chick-fil-A', 'Taco Bell', 'Subway', 'Panera Bread', 'Chipotle',
+                'Starbucks', 'Dunkin\'', 'KFC', 'Popeyes', 'Domino\'s', 'Pizza Hut', 'Papa John\'s', 'Little Caesars',
+                'Olive Garden', 'Red Lobster', 'Outback Steakhouse', 'Texas Roadhouse', 'Ruth\'s Chris', 'Nobu', 'Per Se',
+                'French Laundry', 'Alinea', 'Eleven Madison Park', 'The Ivy', 'Spago', 'Chez Panisse', 'Rao\'s',
+                'L\'Artusi', 'Carbone', 'Don Angie', 'Lilia', 'Gramercy Tavern', 'Balthazar', 'Bacchanal', 'Rezdôôrôô'
+            ];
+
+            const shuffled = [...restaurants].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function generateCelebrityOptions(count) {
+            const celebrities = [
+                'Tom Cruise', 'Tom Hanks', 'Brad Pitt', 'Leonardo DiCaprio', 'Johnny Depp', 'Will Smith', 'Morgan Freeman',
+                'Denzel Washington', 'Meryl Streep', 'Angelina Jolie', 'Jennifer Lawrence', 'Emma Stone', 'Scarlett Johansson',
+                'Cate Blanchett', 'Kate Winslet', 'Natalie Portman', 'Marion Cotillard', 'Michelle Pfeiffer', 'Audrey Hepburn',
+                'Sophia Loren', 'Elizabeth Taylor', 'Marilyn Monroe', 'James Dean', 'Humphrey Bogart', 'Charlie Chaplin',
+                'Muhammad Ali', 'Michael Jordan', 'Pelé', 'Diego Maradona', 'Cristiano Ronaldo', 'Lionel Messi', 'LeBron James',
+                'Tiger Woods', 'Roger Federer', 'Serena Williams', 'Venus Williams', 'Billie Eilish', 'Taylor Swift', 'Beyoncé',
+                'Johnny Depp', 'Robert Pattinson', 'Chris Pratt', 'Chris Evans', 'Chris Hemsworth', 'Mark Ruffalo', 'Robert Downey Jr.'
+            ];
+
+            const shuffled = [...celebrities].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function generateVegetableOptions(count) {
+            const vegetables = [
+                'Broccoli', 'Carrot', 'Spinach', 'Lettuce', 'Kale', 'Cabbage', 'Cauliflower', 'Brussels Sprouts', 'Peas', 'Green Beans',
+                'Zucchini', 'Cucumber', 'Bell Pepper', 'Tomato', 'Eggplant', 'Avocado', 'Corn', 'Asparagus', 'Artichoke', 'Radish',
+                'Beet', 'Turnip', 'Parsnip', 'Celery', 'Mushroom', 'Onion', 'Garlic', 'Leek', 'Scallion', 'Jalapeño',
+                'Potato', 'Sweet Potato', 'Yam', 'Okra', 'Squash', 'Pumpkin', 'Bean', 'Lentil', 'Pea', 'Chickpea',
+                'Arugula', 'Bok Choy', 'Swiss Chard', 'Collard Greens', 'Endive', 'Fennel', 'Ginger', 'Horseradish', 'Rutabaga', 'Bamboo Shoot'
+            ];
+
+            const shuffled = [...vegetables].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        function generateNatureOptions(subject, count) {
+            const descriptors = ['Rare', 'Common', 'Exotic', 'Native', 'Giant', 'Tiny', 'Colorful', 'Unique', 'Beautiful', 'Ancient', 'Endangered', 'Wild', 'Domestic', 'Majestic', 'Mysterious'];
+            const options = [];
+            
+            for (let i = 0; i < count; i++) {
+                const descriptor = descriptors[Math.floor(Math.random() * descriptors.length)];
+                const variation = Math.random() > 0.5 ? ` Variant ${i + 1}` : '';
+                options.push(`${descriptor} ${subject}${variation}`);
+            }
+            return [...new Set(options)].slice(0, count);
+        }
+
+        function generateGenericOptions(subject, count) {
+            const options = [];
+            
+            // Generate creative but distinct options without adjective patterns
+            const templates = [
+                (s, n) => `${s.charAt(0).toUpperCase() + s.slice(1)} ${n}`,
+                (s, n) => `${s.toUpperCase()} #${n}`,
+                (s, n) => `Variant ${n}: ${s}`,
+                (s, n) => `${s} Type ${n}`,
+                (s, n) => `${s} Edition ${n}`,
+            ];
+            
+            const used = new Set();
+            for (let i = 1; i <= count && used.size < count; i++) {
+                const template = templates[Math.floor(Math.random() * templates.length)];
+                const option = template(subject, i);
+                if (!option.match(/^\w+\s+\w+\s+\d+$/) || used.size < 5) { // Allow some number patterns
+                    used.add(option);
+                }
+            }
+            
+            // Fill remaining with creative variations if needed
+            let num = 1;
+            while (used.size < count) {
+                used.add(`${subject} ${num}`);
+                num++;
+            }
+            
+            return Array.from(used).slice(0, count);
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function updateBracketVisualization() {
+            const container = document.getElementById('bracketContainerMM');
+            container.innerHTML = '';
+
+            // Get all rounds with their items
+            const rounds = ['round1', 'round2', 'round3', 'round4', 'round5', 'round6'];
+            const roundsData = rounds.map(r => bracket[r] || []).filter(r => r.length > 0);
+
+            if (roundsData.length === 0) return;
+
+            const totalRounds = roundsData.length;
+            const firstRoundSize = roundsData[0].length;
+            const halfSize = firstRoundSize / 2;
+
+            // Create top half
+            const topHalfDiv = document.createElement('div');
+            topHalfDiv.className = 'bracket-half';
+
+            roundsData.forEach((round, roundIdx) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'bracket-section';
+
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'bracket-section-label';
+                labelDiv.textContent = `R${roundIdx + 1}`;
+                sectionDiv.appendChild(labelDiv);
+
+                // Add only top half items
+                const itemsToShow = round.slice(0, Math.ceil(round.length / 2));
+                itemsToShow.forEach((item, idx) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'bracket-item';
+
+                    // Check if this is in current matchup
+                    const isCurrentMatchup = 
+                        bracket.currentRound === rounds[roundIdx] && 
+                        (Math.floor(idx / 2) === bracket.currentMatchup || 
+                         Math.floor(idx / 2) === bracket.currentMatchup);
+
+                    if (isCurrentMatchup && idx % 2 === 0) {
+                        itemDiv.classList.add('active');
+                    }
+
+                    if (!item.name) {
+                        itemDiv.classList.add('empty');
+                        itemDiv.textContent = '--';
+                    } else {
+                        itemDiv.textContent = item.name.substring(0, 12);
+                    }
+                    sectionDiv.appendChild(itemDiv);
+                });
+
+                topHalfDiv.appendChild(sectionDiv);
+            });
+
+            container.appendChild(topHalfDiv);
+
+            // Create bottom half
+            const bottomHalfDiv = document.createElement('div');
+            bottomHalfDiv.className = 'bracket-half';
+
+            roundsData.forEach((round, roundIdx) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'bracket-section';
+
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'bracket-section-label';
+                labelDiv.textContent = `R${roundIdx + 1}`;
+                sectionDiv.appendChild(labelDiv);
+
+                // Add only bottom half items (in reverse order for bracket effect)
+                const startIdx = Math.ceil(round.length / 2);
+                const itemsToShow = round.slice(startIdx);
+                itemsToShow.reverse().forEach((item, idx) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'bracket-item';
+
+                    // Check if this is in current matchup
+                    const actualIdx = round.length - 1 - idx;
+                    const isCurrentMatchup = 
+                        bracket.currentRound === rounds[roundIdx] && 
+                        (Math.floor(actualIdx / 2) === bracket.currentMatchup);
+
+                    if (isCurrentMatchup && actualIdx % 2 === 1) {
+                        itemDiv.classList.add('active');
+                    }
+
+                    if (!item.name) {
+                        itemDiv.classList.add('empty');
+                        itemDiv.textContent = '--';
+                    } else {
+                        itemDiv.textContent = item.name.substring(0, 12);
+                    }
+                    sectionDiv.appendChild(itemDiv);
+                });
+
+                bottomHalfDiv.appendChild(sectionDiv);
+            });
+
+            container.appendChild(bottomHalfDiv);
+        }
+
+        function displayBracket() {
+            const round = bracket[bracket.currentRound];
+            const matchupIndex = bracket.currentMatchup;
+
+            // Check if round is complete
+            if (matchupIndex * 2 >= round.length) {
+                // Move to next round
+                const nextRound = getNextRound(bracket.currentRound);
+                if (nextRound) {
+                    bracket.currentRound = nextRound;
+                    bracket.currentMatchup = 0;
+                    displayBracket();
+                } else {
+                    // Champion crowned!
+                    document.getElementById('championSection').style.display = 'block';
+                    document.getElementById('mainMatchupContainer').style.display = 'none';
+                    document.getElementById('bracketVisualization').style.display = 'none';
+                    document.getElementById('championName').textContent = bracket.champion || 'TBD';
+                    
+                    // Generate image and create fireworks
+                    generateChampionImage(bracket.champion);
+                    createFireworks();
+                    
+                    updateContendersList();
+                }
+                return;
+            }
+
+            // Get current matchup
+            const item1 = round[matchupIndex * 2];
+            const item2 = round[matchupIndex * 2 + 1];
+
+            if (!item1 || !item2) {
+                return;
+            }
+
+            // Display round indicator
+            const roundNames = {
+                'round1': bracketSize === 64 ? 'Round 1: Round of 64' : bracketSize === 32 ? 'Round 1: Round of 32' : bracketSize === 16 ? 'Round 1: Round of 16' : 'Round 1: Quarterfinals',
+                'round2': bracketSize === 64 ? 'Round 2: Round of 32' : bracketSize === 32 ? 'Round 2: Round of 16' : bracketSize === 16 ? 'Round 2: Quarterfinals' : 'Round 2: Semifinals',
+                'round3': bracketSize === 64 ? 'Round 3: Round of 16' : bracketSize === 32 ? 'Round 3: Quarterfinals' : bracketSize === 16 ? 'Round 3: Semifinals' : 'Round 3: Championship',
+                'round4': bracketSize === 64 ? 'Round 4: Quarterfinals' : bracketSize === 32 ? 'Round 4: Semifinals' : 'Round 4: Championship',
+                'round5': bracketSize === 64 ? 'Round 5: Semifinals' : 'Round 5: Championship',
+                'round6': 'Round 6: Championship'
+            };
+
+            document.getElementById('roundIndicator').textContent = roundNames[bracket.currentRound];
+
+            // Display matchup
+            const matchupVs = document.getElementById('matchupVs');
+            matchupVs.innerHTML = `
+                <div class="contender" onclick="selectWinner('${item1.name}')" style="cursor: pointer;">
+                    ${item1.name}
+                </div>
+                <div class="vs-text">VS</div>
+                <div class="contender" onclick="selectWinner('${item2.name}')" style="cursor: pointer;">
+                    ${item2.name}
+                </div>
+            `;
+
+            // Update bracket visualization
+            updateBracketVisualization();
+
+            // Update contenders list
+            updateContendersList();
+        }
+
+        function updateContendersList() {
+            // Get all active contenders
+            const allRounds = ['round1', 'round2', 'round3', 'round4', 'round5'];
+            const activeContenders = new Set();
+
+            // Add all contenders from current and future rounds
+            allRounds.forEach(roundKey => {
+                const round = bracket[roundKey];
+                round.forEach(competitor => {
+                    if (competitor.name && !bracket.losers.includes(competitor.name)) {
+                        activeContenders.add(competitor.name);
+                    }
+                });
+            });
+
+            // Display active contenders
+            const contendersList = document.getElementById('contendersList');
+            contendersList.innerHTML = Array.from(activeContenders)
+                .map(name => `<div class="contender-tag">${name}</div>`)
+                .join('');
+
+            // Display losers
+            const losersBox = document.getElementById('losersBox');
+            const losersList = document.getElementById('losersList');
+
+            if (bracket.losers.length > 0) {
+                losersBox.style.display = 'block';
+                losersList.innerHTML = bracket.losers
+                    .map(name => `<div class="loser-tag">${name}</div>`)
+                    .join('');
+            } else {
+                losersBox.style.display = 'none';
+            }
+        }
+
+        function selectWinner(winnerName) {
+            const round = bracket[bracket.currentRound];
+            const matchupIndex = bracket.currentMatchup;
+            const item1 = round[matchupIndex * 2];
+            const item2 = round[matchupIndex * 2 + 1];
+
+            // Determine loser
+            const loserName = winnerName === item1.name ? item2.name : item1.name;
+
+            // Add loser to losers list
+            if (!bracket.losers.includes(loserName)) {
+                bracket.losers.push(loserName);
+            }
+
+            // Mark items as having a winner
+            item1.winner = (item1.name === winnerName) ? item1.name : null;
+            item2.winner = (item2.name === winnerName) ? item2.name : null;
+
+            // Advance winner to next round
+            const nextRoundKey = getNextRound(bracket.currentRound);
+            if (nextRoundKey) {
+                const nextRound = bracket[nextRoundKey];
+                const nextIndex = matchupIndex;
+
+                if (nextIndex * 2 >= nextRound.length) {
+                    nextRound.push({ name: winnerName, winner: null });
+                } else {
+                    nextRound[nextIndex * 2] = { name: winnerName, winner: null };
+                }
+            } else {
+                // Champion!
+                bracket.champion = winnerName;
+            }
+
+            // Move to next matchup
+            bracket.currentMatchup++;
+
+            saveBracket();
+            displayBracket();
+        }
+
+        function getNextRound(roundKey) {
+            if (bracketSize === 8) {
+                const mapping = {
+                    'round1': 'round2',
+                    'round2': 'round3',
+                    'round3': null
+                };
+                return mapping[roundKey];
+            } else if (bracketSize === 16) {
+                const mapping = {
+                    'round1': 'round2',
+                    'round2': 'round3',
+                    'round3': 'round4',
+                    'round4': null
+                };
+                return mapping[roundKey];
+            } else if (bracketSize === 32) {
+                const mapping = {
+                    'round1': 'round2',
+                    'round2': 'round3',
+                    'round3': 'round4',
+                    'round4': 'round5',
+                    'round5': null
+                };
+                return mapping[roundKey];
+            } else if (bracketSize === 64) {
+                const mapping = {
+                    'round1': 'round2',
+                    'round2': 'round3',
+                    'round3': 'round4',
+                    'round4': 'round5',
+                    'round5': 'round6',
+                    'round6': null
+                };
+                return mapping[roundKey];
+            }
+        }
+
+        // Generate image for champion
+        function generateChampionImage(championName) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 300;
+            canvas.height = 300;
+            const ctx = canvas.getContext('2d');
+
+            // Gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 300, 300);
+            gradient.addColorStop(0, '#000000');
+            gradient.addColorStop(1, '#003300');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 300, 300);
+
+            // Draw crown
+            ctx.fillStyle = '#00ff00';
+            ctx.beginPath();
+            ctx.moveTo(50, 150);
+            ctx.lineTo(100, 80);
+            ctx.lineTo(150, 120);
+            ctx.lineTo(200, 80);
+            ctx.lineTo(250, 150);
+            ctx.lineTo(240, 180);
+            ctx.lineTo(60, 180);
+            ctx.closePath();
+            ctx.fill();
+
+            // Crown gems
+            ctx.fillStyle = '#FF1493';
+            [100, 150, 200].forEach(x => {
+                ctx.beginPath();
+                ctx.arc(x, 100, 8, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Champion text
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 20px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText('CHAMPION', 150, 210);
+
+            // Champion name
+            ctx.font = 'bold 14px Arial';
+            ctx.fillStyle = '#FFD700';
+            const words = championName.split(' ');
+            let yOffset = 235;
+            words.forEach(word => {
+                ctx.fillText(word, 150, yOffset);
+                yOffset += 20;
+            });
+
+            // Convert to image and display
+            const dataUrl = canvas.toDataURL('image/png');
+            const img = document.getElementById('championImage');
+            img.src = dataUrl;
+            img.style.display = 'block';
+        }
+
+        function resetGame() {
+            bracket = {
+                round1: [],
+                round2: [],
+                round3: [],
+                round4: [],
+                round5: [],
+                round6: [],
+                champion: null,
+                category: '',
+                losers: [],
+                currentRound: 'round1',
+                currentMatchup: 0,
+                size: 32
+            };
+            localStorage.removeItem('bracket');
+            document.getElementById('setupSection').style.display = 'block';
+            document.getElementById('bracketSection').style.display = 'none';
+            document.getElementById('championSection').style.display = 'none';
+            document.getElementById('mainMatchupContainer').style.display = 'block';
+            document.getElementById('categoryInput').value = '';
+            document.getElementById('messageContainer').innerHTML = '';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const editModal = document.getElementById('editModal');
+            const blankModal = document.getElementById('blankModal');
+            if (event.target === editModal) {
+                closeEditModal();
+            }
+            if (event.target === blankModal) {
+                closeBlankModal();
+            }
+        }
+
+        // Music toggle function
+        function toggleMusic() {
+            const audio = document.getElementById('bgMusic');
+            const toggle = document.getElementById('musicToggle');
+            if (toggle.checked) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+
+        // Typing animation for header
+        function typeHeaderAnimation() {
+            const titleEl = document.getElementById('header-title');
+            const texts = [
+                "JOE'S COOL BRACKETS",
+                "IT'S BRACKET TIME, BABY"
+            ];
+            let currentTextIndex = 0;
+            let currentCharIndex = 0;
+            let isTyping = true;
+
+            function updateDisplay() {
+                const currentText = texts[currentTextIndex];
+                const baseText = "> " + currentText.substring(0, currentCharIndex);
+                const cursor = '<span class="cursor">|</span>';
+                titleEl.innerHTML = baseText + cursor;
+            }
+
+            function type() {
+                const currentText = texts[currentTextIndex];
+                
+                if (isTyping) {
+                    if (currentCharIndex < currentText.length) {
+                        currentCharIndex++;
+                        updateDisplay();
+                        setTimeout(type, 60);
+                    } else {
+                        // Stay for 4 seconds
+                        isTyping = false;
+                        setTimeout(type, 4000);
+                    }
+                } else {
+                    // Delete text
+                    if (currentCharIndex > 0) {
+                        currentCharIndex--;
+                        updateDisplay();
+                        setTimeout(type, 40);
+                    } else {
+                        // Move to next text
+                        currentTextIndex = (currentTextIndex + 1) % texts.length;
+                        isTyping = true;
+                        setTimeout(type, 300);
+                    }
+                }
+            }
+            type();
+        }
+
+        // Load bracket on page load
+        window.addEventListener('load', () => {
+            initializeCategoryButtons();
+            loadBracket();
+            typeHeaderAnimation();
+        });
+    </script>
+</body>
+</html>

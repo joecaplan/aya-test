@@ -378,6 +378,11 @@
             border: 3px solid #00ff00;
             box-shadow: 0 0 20px #00ff00;
             margin-bottom: 30px;
+            display: none;
+        }
+
+        .bracket-section .contenders-box {
+            display: block;
         }
 
         .contenders-box h3 {
@@ -491,6 +496,11 @@
 
         .bracket-item.empty {
             opacity: 0.2;
+            display: none;
+        }
+
+        .bracket-section .bracket-item.empty {
+            display: block;
         }
 
         .bracket-finals {
@@ -876,7 +886,7 @@
                 <div class="options-grid" id="editOptionsGrid"></div>
                 <div class="modal-buttons">
                     <button onclick="startBracketFromEdited()">Start Bracket</button>
-                    <button onclick="closeEditModal()" style="background: #999;">Cancel</button>
+                    <button onclick="closeEditModal()" style="background: #000000;">Cancel</button>
                 </div>
             </div>
         </div>
@@ -895,7 +905,7 @@
                 </div>
                 <div class="modal-buttons">
                     <button onclick="startBlankBracket()">Start Bracket</button>
-                    <button onclick="closeBlankModal()" style="background: #999;">Cancel</button>
+                    <button onclick="closeBlankModal()" style="background: #000000;">Cancel</button>
                 </div>
             </div>
         </div>
@@ -1164,7 +1174,7 @@
 
             // Open edit modal
             bracket.category = category;
-            messageContainer.innerHTML = '<div class="info">✓ Generated ideas for "' + category + '" - edit them as needed</div>';
+            messageContainer.innerHTML = '<div class="info">"' + category + '" - nice choice ;)</div>';
             openEditModal(options);
         }
 
@@ -1953,3 +1963,4 @@
     </script>
 </body>
 </html>
+
